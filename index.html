@@ -29,6 +29,7 @@ body{margin:0;background:var(--bg);color:var(--ink);
   font-size:16px;line-height:1.5;}
 .wrap{max-width:680px;margin:0 auto;padding:0 20px 40px}
 a{color:var(--own)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--marigold);outline-offset:2px}
 header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 6px}
 .wordmark{display:flex;align-items:center;gap:9px;font-weight:800;font-size:21px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
 .ribbon{width:13px;height:19px;background:var(--marigold);border-radius:2px 2px 5px 5px;flex:none}
@@ -78,6 +79,11 @@ header nav a{color:var(--ink2);text-decoration:none;font-size:15px;padding:12px 
   background:var(--wash);color:var(--ink);text-decoration:none;font-size:15.5px;font-weight:600}
 footer{margin-top:38px;border-top:1px solid var(--hair);padding-top:18px}
 footer p{font-size:13.5px;color:var(--ink3);line-height:1.55;margin:0 0 8px}
+.sstat{font-size:13.5px;color:var(--ink3);padding:10px 2px 0;margin:0}
+.serror{font-size:15px;color:var(--ink2);padding:10px 2px 0}
+.serror p{margin:0 0 8px}
+.sretry{min-height:44px;padding:0 16px;border:1.5px solid var(--own);border-radius:10px;background:transparent;color:var(--own);font:inherit;font-weight:650;cursor:pointer}
+.result.kb-on{outline:2px solid var(--own);outline-offset:1px}
 </style>
 </head>
 <body>
@@ -87,7 +93,7 @@ footer p{font-size:13.5px;color:var(--ink3);line-height:1.55;margin:0 0 8px}
   <a class="wordmark" href="./index.html"><span class="ribbon" aria-hidden="true"></span>BookLook</a>
   <nav><a href="how-to-read.html">How to read this site</a></nav>
 </header>
-
+<main>
 <!-- 1 · THE POINT -->
 <h1 class="promise">Look up an Ontario charity before you give.</h1>
 <p class="lede">BookLook reads each charity&rsquo;s annual filing with the Canada Revenue Agency and shows, in plain language, who paid for its work and where the money went. No scores. No grades.</p>
@@ -124,8 +130,8 @@ footer p{font-size:13.5px;color:var(--ink3);line-height:1.55;margin:0 0 8px}
   <h2>Ways in</h2>
 
   <section class="card">
-    <h3>Largest charities by revenue</h3>
-    <p class="way-sub">From the largest group, by the revenue in each charity&rsquo;s newest return. Listed in alphabetical order — size is not a verdict.</p>
+    <h3>Charities that filed over $1 billion in revenue</h3>
+    <p class="way-sub">Grouped by the revenue in each charity&rsquo;s newest return, and listed in alphabetical order inside the group — size is not a verdict.</p>
     <ul class="names">
       <li><a href="charity/870157641RR0001.html">Canadian Blood Services <span class="chev">&rarr;</span></a></li>
       <li><a href="charity/860684232RR0001.html">Cancer Care Ontario <span class="chev">&rarr;</span></a></li>
@@ -166,55 +172,14 @@ footer p{font-size:13.5px;color:var(--ink3);line-height:1.55;margin:0 0 8px}
 </div>
 
 <!-- 5 · STANDING NOTE, demoted -->
+</main>
 <footer>
   <p>BookLook covers Ontario: 39,699 registered charities and 487,398 annual returns, filing years 2009&ndash;2024. Every figure is as filed with the Canada Revenue Agency. There are no scores, grades, or rankings here.</p>
   <p>The newest return the CRA has published is for a year ended December 31, 2024 — the published files run about two years behind, for every charity.</p>
 </footer>
 
 </div>
-<script>
-var FALLBACK_IDX=[
-{"b":"100220417RR0001","n":"INTERNATIONAL RESOURCE CENTRE FOR PERFORMING ARTISTS","a":"","c":"TORONTO"},
-{"b":"100749357RR0001","n":"CAMP B'NAI B'RITH OF OTTAWA INCORPORATED","a":"","c":"OTTAWA"},
-{"b":"103459277RR0001","n":"MAIMONIDES SCHOOLS FOR JEWISH STUDIES","a":"","c":"HAMILTON"},
-{"b":"118881549RR0001","n":"DAILY BREAD FOOD BANK","a":"","c":"TORONTO"},
-{"b":"817387277RR0001","n":"Mastercard Foundation","a":"","c":"TORONTO"},
-{"b":"896568417RR0001","n":"CANADAHELPS CANADON","a":"","c":"TORONTO"}];
-var PAGE_PREFIX="charity/";
-var inp=document.getElementById('q'),box=document.getElementById('results'),IDX=null;
-fetch('search-index.json').then(function(r){return r.json();}).then(function(d){IDX=d;}).catch(function(){IDX=FALLBACK_IDX;});
-function norm(s){return (s||'').toLowerCase();}
-var STOP={'of':1,'the':1,'and':1,'de':1,'la':1,'le':1,'du':1,'des':1,'au':1,'aux':1,'en':1,'for':1};
-var KEEP={'YMCA':1,'YWCA':1,'CRA':1};
-function displayName(n){
-  if(n!==n.toUpperCase())return n;
-  return n.toLowerCase().split(' ').map(function(w,i){
-    if(!w)return w;
-    if(KEEP[w.toUpperCase()])return w.toUpperCase();
-    if(i>0&&STOP[w])return w;
-    return w.split('-').map(function(part){
-      return part.replace(/(^|')([a-z])/g,function(m,p,c){return p+c.toUpperCase();});
-    }).join('-');
-  }).join(' ');
-}
-function esc(s){return s.replace(/</g,'&lt;');}
-inp.addEventListener('input',function(){
-  var q=norm(inp.value).trim();
-  if(!IDX||q.length<2){box.innerHTML='';return;}
-  var hits=IDX.filter(function(e){
-    return norm(e.n).includes(q)||norm(e.a).includes(q)||
-      e.b.replace(/[^0-9A-Z]/gi,'').includes(q.replace(/[^0-9A-Z]/gi,''));
-  }).slice(0,60);
-  box.innerHTML=hits.length?hits.map(function(e){
-    return '<div class="result"><div><a href="'+PAGE_PREFIX+e.b+'.html">'+esc(displayName(e.n))+'</a>'+
-      '<div class="small">'+(e.c?esc(e.c.charAt(0)+e.c.slice(1).toLowerCase())+' · ':'')+'Business number '+e.b+'</div></div></div>';
-  }).join(''):'<p class="noresult">No charity here matches that. Check the spelling, or try the business number.</p>';
-});
-document.getElementById('randomBtn').addEventListener('click',function(){
-  var pool=IDX||FALLBACK_IDX;
-  var pick=pool[Math.floor(Math.random()*pool.length)];
-  window.location.href=PAGE_PREFIX+pick.b+'.html';
-});
-</script>
+<script>window.BL_SEARCH={prefix:"charity/",strips:false,titlecase:true};</script>
+<script src="assets/search.js"></script>
 </body>
 </html>
