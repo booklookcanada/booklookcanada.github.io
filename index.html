@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BookLook — Look up an Ontario charity before you give</title>
+<style>
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-var.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Source Serif 4";src:url("assets/fonts/source-serif-4-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Source Serif 4";src:url("assets/fonts/source-serif-4-400-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+:root{
+  --bg:#F4F7FB; --card:#FFFFFF; --ink:#101B2B; --ink2:#44546A; --ink3:#5F6F84;
+  --hair:#DCE3EC; --wash:#EDF1F7;
+  --own:#0B63B5; --onward:#A8498A; --marigold:#F5B93A;
+  --shadow:0 1px 2px rgba(16,27,43,.05),0 8px 24px rgba(16,27,43,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0D141F; --card:#16202E; --ink:#E9EFF6; --ink2:#A9B8C9; --ink3:#8B9BAE;
+    --hair:#263242; --wash:#1B2839;
+    --own:#63A9EC; --onward:#D88CC4;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:16px;line-height:1.5;}
+.wrap{max-width:680px;margin:0 auto;padding:0 20px 40px}
+a{color:var(--own)}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 6px}
+.wordmark{display:flex;align-items:center;gap:9px;font-weight:800;font-size:21px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.ribbon{width:13px;height:19px;background:var(--marigold);border-radius:2px 2px 5px 5px;flex:none}
+header nav a{color:var(--ink2);text-decoration:none;font-size:15px;padding:12px 4px;display:inline-block}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:16px;box-shadow:var(--shadow);padding:22px;margin-top:18px}
+.kicker{font-size:12.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin:0 0 10px}
+.hero-name{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.2}
+.hero-city{color:var(--ink2);font-size:15px;margin:2px 0 0}
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:20px}
+.fig{padding:2px 16px 2px 0}
+.fig + .fig{border-left:1px solid var(--hair);padding-left:18px}
+.fig .num{font-size:clamp(52px,15vw,72px);font-weight:800;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}
+.fig.own .num{color:var(--own)}
+.fig.onward .num{color:var(--onward)}
+.fig .lab{margin-top:8px;font-size:15.5px;line-height:1.4;color:var(--ink)}
+.fye{margin-top:18px;font-size:14px;color:var(--ink2)}
+.teach{font-family:"Source Serif 4",Georgia,"Times New Roman",serif;font-size:17.5px;line-height:1.45;margin:12px 0 0;color:var(--ink)}
+.read-link{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;font-weight:650;text-decoration:none;font-size:16px}
+.promise{font-size:29px;font-weight:800;letter-spacing:-.025em;line-height:1.16;margin:20px 0 10px}
+.lede{font-size:17px;color:var(--ink2);line-height:1.52;margin:0 0 20px;max-width:34em}
+.searchbox{display:block}
+.searchbox input{width:100%;height:64px;border:1.5px solid var(--hair);border-radius:14px;background:var(--card);
+  padding:0 18px;font:inherit;font-size:18px;color:var(--ink);box-shadow:var(--shadow);appearance:none;-webkit-appearance:none}
+.searchbox input:focus{outline:2px solid var(--own);outline-offset:1px;border-color:transparent}
+.privacy{font-size:13.5px;color:var(--ink3);margin:9px 2px 0}
+#results{margin-top:6px}
+.result{display:flex;align-items:center;min-height:52px;padding:10px 14px;background:var(--card);border:1px solid var(--hair);border-radius:12px;margin-top:8px}
+.result a{font-weight:650;text-decoration:none;color:var(--ink);font-size:16.5px}
+.result .small{font-size:13px;color:var(--ink3);margin-top:1px}
+.noresult{font-size:15px;color:var(--ink2);padding:10px 2px 0}
+.ways{margin-top:36px}
+.ways h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin:0 0 4px}
+.way-sub{color:var(--ink2);font-size:15.5px;margin:6px 0 0;line-height:1.45}
+.way h3,.card h3{font-size:19px;font-weight:750;letter-spacing:-.015em;margin:0}
+.names{list-style:none;margin:12px 0 0;padding:0}
+.names li{border-top:1px solid var(--hair)}
+.names a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:6px 2px;
+  color:var(--ink);text-decoration:none;font-weight:600;font-size:16.5px}
+.names a .chev{color:var(--ink3);font-weight:400}
+.seeall{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;font-weight:650;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;margin-top:14px;
+  border:1.5px solid var(--own);border-radius:12px;background:transparent;color:var(--own);
+  font:inherit;font-weight:700;font-size:16.5px;cursor:pointer;width:100%}
+.btn:active{background:var(--wash)}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.chip{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--hair);border-radius:999px;
+  background:var(--wash);color:var(--ink);text-decoration:none;font-size:15.5px;font-weight:600}
+footer{margin-top:38px;border-top:1px solid var(--hair);padding-top:18px}
+footer p{font-size:13.5px;color:var(--ink3);line-height:1.55;margin:0 0 8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <a class="wordmark" href="./index.html"><span class="ribbon" aria-hidden="true"></span>BookLook</a>
+  <nav><a href="how-to-read.html">How to read this site</a></nav>
+</header>
+
+<!-- 1 · THE POINT -->
+<h1 class="promise">Look up an Ontario charity before you give.</h1>
+<p class="lede">BookLook reads each charity&rsquo;s annual filing with the Canada Revenue Agency and shows, in plain language, who paid for its work and where the money went. No scores. No grades.</p>
+
+<!-- 2 · SEARCH -->
+<label class="searchbox">
+  <input type="search" id="q" placeholder="Search by charity name or business number…" autocomplete="off" aria-label="Search by charity name or business number">
+</label>
+<p class="privacy">Search runs on this device. Nothing you type is sent anywhere.</p>
+<div id="results" aria-live="polite"></div>
+
+<!-- 3 · HERO — what you get, in one real charity -->
+<section class="card" aria-label="What a BookLook page shows, in one example">
+  <p class="kicker">Here&rsquo;s what you get — one real charity</p>
+  <h2 class="hero-name">Daily Bread Food Bank</h2>
+  <p class="hero-city">Toronto, Ontario</p>
+  <div class="figs">
+    <div class="fig own">
+      <div class="num">$39</div>
+      <div class="lab">of every $100 went to its own programs</div>
+    </div>
+    <div class="fig onward">
+      <div class="num">$53</div>
+      <div class="lab">of every $100 was passed on to other charities</div>
+    </div>
+  </div>
+  <p class="fye">Year ended Jun 30, 2024 · as filed with the Canada Revenue Agency</p>
+  <p class="teach">Some charities spend on their own work. Some pass money on to other charities. BookLook shows both figures side by side — never added together — so before you give, you can see where the money actually went.</p>
+  <a class="read-link" href="charity/118881549RR0001.html">Read its page&nbsp;&rarr;</a>
+</section>
+
+<!-- 4 · WAYS IN -->
+<div class="ways">
+  <h2>Ways in</h2>
+
+  <section class="card">
+    <h3>Largest charities by revenue</h3>
+    <p class="way-sub">From the largest group, by the revenue in each charity&rsquo;s newest return. Listed in alphabetical order — size is not a verdict.</p>
+    <ul class="names">
+      <li><a href="charity/870157641RR0001.html">Canadian Blood Services <span class="chev">&rarr;</span></a></li>
+      <li><a href="charity/860684232RR0001.html">Cancer Care Ontario <span class="chev">&rarr;</span></a></li>
+      <li><a href="charity/107268864RR0001.html">Dufferin-Peel Catholic District School Board <span class="chev">&rarr;</span></a></li>
+      <li><a href="charity/107462301RR0001.html">Halton District School Board <span class="chev">&rarr;</span></a></li>
+      <li><a href="charity/867435497RR0001.html">Hamilton Health Sciences Corporation <span class="chev">&rarr;</span></a></li>
+    </ul>
+    <a class="seeall" href="browse.html">See all — browse by size&nbsp;&rarr;</a>
+  </section>
+
+  <section class="card">
+    <h3>A charity at random</h3>
+    <p class="way-sub">No ranking, no reason. Every charity here gets the same page, built the same way — open one and see.</p>
+    <button class="btn" id="randomBtn" type="button">Surprise me</button>
+  </section>
+
+  <section class="card">
+    <h3>Browse by what charities do</h3>
+    <div class="chips">
+      <a class="chip" href="categories.html">Health</a>
+      <a class="chip" href="categories.html">Education</a>
+      <a class="chip" href="categories.html">Religion</a>
+      <a class="chip" href="categories.html">Poverty relief</a>
+      <a class="chip" href="categories.html">Environment</a>
+      <a class="chip" href="categories.html">Animal welfare</a>
+      <a class="chip" href="categories.html">Arts &amp; culture</a>
+      <a class="chip" href="categories.html">Research</a>
+      <a class="chip" href="categories.html">Seniors</a>
+      <a class="chip" href="categories.html">Human rights</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>How to read this site</h3>
+    <p class="way-sub">What each figure means, where it comes from in the filing, and how to dispute a number if you think it&rsquo;s wrong.</p>
+    <a class="seeall" href="how-to-read.html">Read the guide&nbsp;&rarr;</a>
+  </section>
+</div>
+
+<!-- 5 · STANDING NOTE, demoted -->
+<footer>
+  <p>BookLook covers Ontario: 39,699 registered charities and 487,398 annual returns, filing years 2009&ndash;2024. Every figure is as filed with the Canada Revenue Agency. There are no scores, grades, or rankings here.</p>
+  <p>The newest return the CRA has published is for a year ended December 31, 2024 — the published files run about two years behind, for every charity.</p>
+</footer>
+
+</div>
+<script>
+var FALLBACK_IDX=[
+{"b":"100220417RR0001","n":"INTERNATIONAL RESOURCE CENTRE FOR PERFORMING ARTISTS","a":"","c":"TORONTO"},
+{"b":"100749357RR0001","n":"CAMP B'NAI B'RITH OF OTTAWA INCORPORATED","a":"","c":"OTTAWA"},
+{"b":"103459277RR0001","n":"MAIMONIDES SCHOOLS FOR JEWISH STUDIES","a":"","c":"HAMILTON"},
+{"b":"118881549RR0001","n":"DAILY BREAD FOOD BANK","a":"","c":"TORONTO"},
+{"b":"817387277RR0001","n":"Mastercard Foundation","a":"","c":"TORONTO"},
+{"b":"896568417RR0001","n":"CANADAHELPS CANADON","a":"","c":"TORONTO"}];
+var PAGE_PREFIX="charity/";
+var inp=document.getElementById('q'),box=document.getElementById('results'),IDX=null;
+fetch('search-index.json').then(function(r){return r.json();}).then(function(d){IDX=d;}).catch(function(){IDX=FALLBACK_IDX;});
+function norm(s){return (s||'').toLowerCase();}
+var STOP={'of':1,'the':1,'and':1,'de':1,'la':1,'le':1,'du':1,'des':1,'au':1,'aux':1,'en':1,'for':1};
+var KEEP={'YMCA':1,'YWCA':1,'CRA':1};
+function displayName(n){
+  if(n!==n.toUpperCase())return n;
+  return n.toLowerCase().split(' ').map(function(w,i){
+    if(!w)return w;
+    if(KEEP[w.toUpperCase()])return w.toUpperCase();
+    if(i>0&&STOP[w])return w;
+    return w.split('-').map(function(part){
+      return part.replace(/(^|')([a-z])/g,function(m,p,c){return p+c.toUpperCase();});
+    }).join('-');
+  }).join(' ');
+}
+function esc(s){return s.replace(/</g,'&lt;');}
+inp.addEventListener('input',function(){
+  var q=norm(inp.value).trim();
+  if(!IDX||q.length<2){box.innerHTML='';return;}
+  var hits=IDX.filter(function(e){
+    return norm(e.n).includes(q)||norm(e.a).includes(q)||
+      e.b.replace(/[^0-9A-Z]/gi,'').includes(q.replace(/[^0-9A-Z]/gi,''));
+  }).slice(0,60);
+  box.innerHTML=hits.length?hits.map(function(e){
+    return '<div class="result"><div><a href="'+PAGE_PREFIX+e.b+'.html">'+esc(displayName(e.n))+'</a>'+
+      '<div class="small">'+(e.c?esc(e.c.charAt(0)+e.c.slice(1).toLowerCase())+' · ':'')+'Business number '+e.b+'</div></div></div>';
+  }).join(''):'<p class="noresult">No charity here matches that. Check the spelling, or try the business number.</p>';
+});
+document.getElementById('randomBtn').addEventListener('click',function(){
+  var pool=IDX||FALLBACK_IDX;
+  var pick=pool[Math.floor(Math.random()*pool.length)];
+  window.location.href=PAGE_PREFIX+pick.b+'.html';
+});
+</script>
+</body>
+</html>
