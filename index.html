@@ -6,12 +6,11 @@
 <title>BookLook — Look up an Ontario charity before you give</title>
 <style>
 @font-face{font-family:"Inter";src:url("assets/fonts/inter-var.woff2") format("woff2");font-weight:100 900;font-display:swap}
-@font-face{font-family:"Source Serif 4";src:url("assets/fonts/source-serif-4-400.woff2") format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"Source Serif 4";src:url("assets/fonts/source-serif-4-400-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
 :root{
   --bg:#F4F7FB; --card:#FFFFFF; --ink:#101B2B; --ink2:#44546A; --ink3:#5F6F84;
   --hair:#DCE3EC; --wash:#EDF1F7;
   --own:#0B63B5; --onward:#A8498A; --marigold:#F5B93A;
+  --waffle-empty:#E3E9F0;
   --shadow:0 1px 2px rgba(16,27,43,.05),0 8px 24px rgba(16,27,43,.06);
 }
 @media (prefers-color-scheme: dark){
@@ -19,159 +18,199 @@
     --bg:#0D141F; --card:#16202E; --ink:#E9EFF6; --ink2:#A9B8C9; --ink3:#8B9BAE;
     --hair:#263242; --wash:#1B2839;
     --own:#63A9EC; --onward:#D88CC4;
+    --waffle-empty:#263242;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
   }
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--ink);overflow-x:clip;
   font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   font-size:16px;line-height:1.5;}
 .wrap{max-width:680px;margin:0 auto;padding:0 20px 40px}
-a{color:var(--own)}
+a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
+a:hover{background:var(--marigold);color:var(--ink)}
 a:focus-visible,button:focus-visible{outline:3px solid var(--marigold);outline-offset:2px}
 header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 6px}
 .wordmark{display:flex;align-items:center;gap:9px;font-weight:800;font-size:21px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
-.ribbon{width:13px;height:19px;background:var(--marigold);border-radius:2px 2px 5px 5px;flex:none}
+.wordmark:hover{background:none}
+.bookmark{flex:none;display:block}
 header nav a{color:var(--ink2);text-decoration:none;font-size:15px;padding:12px 4px;display:inline-block}
-.card{background:var(--card);border:1px solid var(--hair);border-radius:16px;box-shadow:var(--shadow);padding:22px;margin-top:18px}
-.kicker{font-size:12.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin:0 0 10px}
-.hero-name{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.2}
-.hero-city{color:var(--ink2);font-size:15px;margin:2px 0 0}
-.figs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:20px}
-.fig{padding:2px 16px 2px 0}
-.fig + .fig{border-left:1px solid var(--hair);padding-left:18px}
-.fig .num{font-size:clamp(52px,15vw,72px);font-weight:800;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}
-.fig.own .num{color:var(--own)}
-.fig.onward .num{color:var(--onward)}
-.fig .lab{margin-top:8px;font-size:15.5px;line-height:1.4;color:var(--ink)}
-.fye{margin-top:18px;font-size:14px;color:var(--ink2)}
-.teach{font-family:"Source Serif 4",Georgia,"Times New Roman",serif;font-size:17.5px;line-height:1.45;margin:12px 0 0;color:var(--ink)}
-.read-link{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;font-weight:650;text-decoration:none;font-size:16px}
-.promise{font-size:29px;font-weight:800;letter-spacing:-.025em;line-height:1.16;margin:20px 0 10px}
-.lede{font-size:17px;color:var(--ink2);line-height:1.52;margin:0 0 20px;max-width:34em}
-.searchbox{display:block}
+header nav a:hover{background:none;text-decoration:underline}
+/* --- hero (open band, no card) --- */
+.hero{padding:26px 0 4px}
+.promise{font-size:32px;font-weight:800;letter-spacing:-.025em;line-height:1.14;margin:14px 0 12px}
+.hl{background:linear-gradient(180deg,transparent 64%,var(--marigold) 64%,var(--marigold) 94%,transparent 94%);padding:0 2px}
+.lede{font-size:17px;color:var(--ink2);line-height:1.52;margin:0 0 22px;max-width:34em}
+.searchbox{display:block;position:relative}
+.search-ic{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--ink2);pointer-events:none}
 .searchbox input{width:100%;height:64px;border:1.5px solid var(--hair);border-radius:14px;background:var(--card);
-  padding:0 18px;font:inherit;font-size:18px;color:var(--ink);box-shadow:var(--shadow);appearance:none;-webkit-appearance:none}
-.searchbox input:focus{outline:2px solid var(--own);outline-offset:1px;border-color:transparent}
-.privacy{font-size:13.5px;color:var(--ink3);margin:9px 2px 0}
+  padding:0 18px 0 50px;font:inherit;font-size:18px;color:var(--ink);appearance:none;-webkit-appearance:none}
+.searchbox input::placeholder{color:var(--ink2);opacity:1}
+.searchbox input:focus{outline:2px solid var(--marigold);outline-offset:2px;border-color:transparent}
+.privacy{font-size:13.5px;color:var(--ink2);margin:10px 2px 0;line-height:1.5}
+.scalestrip{font-size:13.5px;color:var(--ink2);margin:16px 2px 0}
 #results{margin-top:6px}
 .result{display:flex;align-items:center;min-height:52px;padding:10px 14px;background:var(--card);border:1px solid var(--hair);border-radius:12px;margin-top:8px}
 .result a{font-weight:650;text-decoration:none;color:var(--ink);font-size:16.5px}
+.result a:hover{background:none;text-decoration:underline}
 .result .small{font-size:13px;color:var(--ink3);margin-top:1px}
 .noresult{font-size:15px;color:var(--ink2);padding:10px 2px 0}
-.ways{margin-top:36px}
-.ways h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin:0 0 4px}
-.way-sub{color:var(--ink2);font-size:15.5px;margin:6px 0 0;line-height:1.45}
-.way h3,.card h3{font-size:19px;font-weight:750;letter-spacing:-.015em;margin:0}
-.names{list-style:none;margin:12px 0 0;padding:0}
-.names li{border-top:1px solid var(--hair)}
-.names a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:6px 2px;
-  color:var(--ink);text-decoration:none;font-weight:600;font-size:16.5px}
-.names a .chev{color:var(--ink3);font-weight:400}
-.seeall{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;font-weight:650;text-decoration:none}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;margin-top:14px;
-  border:1.5px solid var(--own);border-radius:12px;background:transparent;color:var(--own);
-  font:inherit;font-weight:700;font-size:16.5px;cursor:pointer;width:100%}
-.btn:active{background:var(--wash)}
-.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
-.chip{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--hair);border-radius:999px;
-  background:var(--wash);color:var(--ink);text-decoration:none;font-size:15.5px;font-weight:600}
-footer{margin-top:38px;border-top:1px solid var(--hair);padding-top:18px}
-footer p{font-size:13.5px;color:var(--ink3);line-height:1.55;margin:0 0 8px}
 .sstat{font-size:13.5px;color:var(--ink3);padding:10px 2px 0;margin:0}
 .serror{font-size:15px;color:var(--ink2);padding:10px 2px 0}
 .serror p{margin:0 0 8px}
-.sretry{min-height:44px;padding:0 16px;border:1.5px solid var(--own);border-radius:10px;background:transparent;color:var(--own);font:inherit;font-weight:650;cursor:pointer}
-.result.kb-on{outline:2px solid var(--own);outline-offset:1px}
+.sretry{min-height:44px;padding:0 16px;border:1.5px solid var(--ink);border-radius:10px;background:transparent;color:var(--ink);font:inherit;font-weight:650;cursor:pointer}
+.result.kb-on{outline:2px solid var(--marigold);outline-offset:1px}
+/* --- Daily Bread centerpiece: full-bleed white band --- */
+.band-example{width:100vw;margin-left:calc(50% - 50vw);background:var(--card);margin-top:38px;padding:36px 0 32px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.band-inner{max-width:680px;margin:0 auto;padding:0 20px}
+.kicker{font-size:12.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin:0 0 10px}
+.hero-name{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.2}
+.hero-city{color:var(--ink2);font-size:15px;margin:2px 0 0}
+.waffle-units{margin-top:22px}
+.wunit + .wunit{margin-top:28px;border-top:1px solid var(--hair);padding-top:26px}
+@media (min-width:768px){
+  .waffle-units{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  .wunit + .wunit{margin-top:0;border-top:none;padding-top:0;border-left:1px solid var(--hair);padding-left:32px}
+}
+.wunit .num{font-size:clamp(72px,20vw,96px);font-weight:800;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}
+.wunit.own .num{color:var(--own)}
+.wunit.onward .num{color:var(--onward)}
+.wunit .lab{margin-top:8px;font-size:15.5px;line-height:1.4;color:var(--ink)}
+.waffle{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:16px;max-width:264px}
+.waffle i{display:block;aspect-ratio:1/1;border-radius:2px;background:var(--waffle-empty)}
+.waffle i.f-own{background:var(--own)}
+.waffle i.f-onward{background:var(--onward)}
+.waffle.js-anim i.f-own,.waffle.js-anim i.f-onward{opacity:0;transform:scale(.55)}
+.waffle.js-anim.inview i.f-own,.waffle.js-anim.inview i.f-onward{opacity:1;transform:scale(1);transition:opacity .35s ease,transform .35s ease;transition-delay:calc(var(--i)*6ms)}
+@media (prefers-reduced-motion: reduce){
+  .waffle i{transition:none !important;animation:none !important}
+  .waffle.js-anim i.f-own,.waffle.js-anim i.f-onward{opacity:1;transform:none}
+}
+.waffle-cap{font-size:14px;color:var(--ink2);margin:20px 0 0}
+.other-line{font-size:15.5px;color:var(--ink);margin:8px 0 0}
+.fye{margin-top:14px;font-size:14px;color:var(--ink2)}
+.teach{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.55;margin:12px 0 0;color:var(--ink2)}
+.read-link{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;font-weight:650;font-size:16px}
+/* --- ways in (open sections, spacing not cards) --- */
+.ways{margin-top:8px}
+.ways>h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin:34px 0 4px}
+.way{padding:26px 0 6px;border-top:1px solid var(--hair);margin-top:22px}
+.way h3{font-size:21px;font-weight:750;letter-spacing:-.015em;margin:0}
+.way-sub{color:var(--ink2);font-size:15.5px;margin:6px 0 0;line-height:1.45}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;margin-top:16px;
+  border:1.5px solid var(--ink);border-radius:12px;background:var(--card);color:var(--ink);
+  font:inherit;font-weight:700;font-size:16.5px;cursor:pointer;width:100%}
+.btn:hover{background:var(--marigold)}
+.btn:active{background:var(--wash)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:480px){.tile{padding:12px;gap:9px}.tile .tl{font-size:15px}}
+.tile{display:flex;align-items:center;gap:12px;min-height:64px;padding:14px 16px;border-radius:12px;
+  background:var(--card);color:var(--ink);text-decoration:none}
+.tile:hover{background:var(--card);outline:2px solid var(--marigold);outline-offset:-2px}
+.tile svg{flex:none;color:var(--ink2)}
+.tile .tl{font-weight:650;font-size:16px;line-height:1.25;display:block}
+.tile .tc{font-size:13.5px;color:var(--ink2);display:block;margin-top:1px}
+.bandlabel{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin:20px 0 2px}
+.names{list-style:none;margin:6px 0 0;padding:0}
+.names li{border-top:1px solid var(--hair)}
+.names a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:6px 2px;
+  color:var(--ink);text-decoration:none;font-weight:600;font-size:16.5px}
+.names a:hover{background:none;text-decoration:underline}
+.names a .rgroup{color:var(--ink2);font-weight:400;font-size:13.5px;white-space:nowrap}
+.names a .chev{color:var(--ink3);font-weight:400}
+.size-cap{font-size:13.5px;color:var(--ink2);margin:10px 0 0}
+.seeall{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;font-weight:650}
+footer{margin-top:38px;border-top:1px solid var(--hair);padding-top:18px}
+footer p{font-size:13.5px;color:var(--ink3);line-height:1.55;margin:0 0 8px}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header>
-  <a class="wordmark" href="./index.html"><span class="ribbon" aria-hidden="true"></span>BookLook</a>
+  <a class="wordmark" href="./index.html"><svg class="bookmark" width="26" height="20" viewBox="0 0 26 20" aria-hidden="true" focusable="false"><path d="M13 4.2C10.6 2.2 6.6 1.4 2 2.2v13.6c4.6-.8 8.6 0 11 2 2.4-2 6.4-2.8 11-2V2.2c-4.6-.8-8.6 0-11 2Z" fill="none" stroke="#F5B93A" stroke-width="2.4" stroke-linejoin="round"/><path d="M13 4.2v13.6" stroke="#F5B93A" stroke-width="2.4"/></svg>BookLook</a>
   <nav><a href="how-to-read.html">How to read this site</a></nav>
 </header>
 <main>
-<!-- 1 · THE POINT -->
-<h1 class="promise">Look up an Ontario charity before you give.</h1>
-<p class="lede">BookLook reads each charity&rsquo;s annual filing with the Canada Revenue Agency and shows, in plain language, who paid for its work and where the money went. No scores. No grades.</p>
+<!-- 1 · HERO + SEARCH (open band) -->
+<section class="hero">
+<h1 class="promise">Look up an Ontario charity <span class="hl">before you give</span>.</h1>
+<p class="lede">Plain-language summaries of each charity&rsquo;s CRA filing. No scores. No grades.</p>
 
-<!-- 2 · SEARCH -->
 <label class="searchbox">
-  <input type="search" id="q" placeholder="Search by charity name or business number…" autocomplete="off" aria-label="Search by charity name or business number">
+  <svg class="search-ic" width="21" height="21" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+  <input type="search" id="q" placeholder="Search any Ontario charity" autocomplete="off" aria-label="Search by charity name or business number">
 </label>
-<p class="privacy">Search runs on this device. Nothing you type is sent anywhere.</p>
+<p class="privacy">Search by name or business number. Search runs on this device. Nothing you type is sent anywhere.</p>
 <div id="results" aria-live="polite"></div>
+<p class="scalestrip">39,699 Ontario charities · 487,398 annual returns · 2009–2024</p>
+</section>
 
-<!-- 3 · HERO — what you get, in one real charity -->
-<section class="card" aria-label="What a BookLook page shows, in one example">
+<!-- 2 · DAILY BREAD CENTERPIECE (full-bleed white band) -->
+<section class="band-example" aria-label="What a BookLook page shows, in one example">
+  <div class="band-inner">
   <p class="kicker">Here&rsquo;s what you get — one real charity</p>
   <h2 class="hero-name">Daily Bread Food Bank</h2>
   <p class="hero-city">Toronto, Ontario</p>
-  <div class="figs">
-    <div class="fig own">
+  <div class="waffle-units">
+    <div class="wunit own">
       <div class="num">$39</div>
       <div class="lab">of every $100 went to its own programs</div>
+      <div class="waffle" role="img" aria-label="39 of 100 squares filled"><i class="f-own" style="--i:0"></i><i class="f-own" style="--i:1"></i><i class="f-own" style="--i:2"></i><i class="f-own" style="--i:3"></i><i class="f-own" style="--i:4"></i><i class="f-own" style="--i:5"></i><i class="f-own" style="--i:6"></i><i class="f-own" style="--i:7"></i><i class="f-own" style="--i:8"></i><i class="f-own" style="--i:9"></i><i class="f-own" style="--i:10"></i><i class="f-own" style="--i:11"></i><i class="f-own" style="--i:12"></i><i class="f-own" style="--i:13"></i><i class="f-own" style="--i:14"></i><i class="f-own" style="--i:15"></i><i class="f-own" style="--i:16"></i><i class="f-own" style="--i:17"></i><i class="f-own" style="--i:18"></i><i class="f-own" style="--i:19"></i><i class="f-own" style="--i:20"></i><i class="f-own" style="--i:21"></i><i class="f-own" style="--i:22"></i><i class="f-own" style="--i:23"></i><i class="f-own" style="--i:24"></i><i class="f-own" style="--i:25"></i><i class="f-own" style="--i:26"></i><i class="f-own" style="--i:27"></i><i class="f-own" style="--i:28"></i><i class="f-own" style="--i:29"></i><i class="f-own" style="--i:30"></i><i class="f-own" style="--i:31"></i><i class="f-own" style="--i:32"></i><i class="f-own" style="--i:33"></i><i class="f-own" style="--i:34"></i><i class="f-own" style="--i:35"></i><i class="f-own" style="--i:36"></i><i class="f-own" style="--i:37"></i><i class="f-own" style="--i:38"></i><i style="--i:39"></i><i style="--i:40"></i><i style="--i:41"></i><i style="--i:42"></i><i style="--i:43"></i><i style="--i:44"></i><i style="--i:45"></i><i style="--i:46"></i><i style="--i:47"></i><i style="--i:48"></i><i style="--i:49"></i><i style="--i:50"></i><i style="--i:51"></i><i style="--i:52"></i><i style="--i:53"></i><i style="--i:54"></i><i style="--i:55"></i><i style="--i:56"></i><i style="--i:57"></i><i style="--i:58"></i><i style="--i:59"></i><i style="--i:60"></i><i style="--i:61"></i><i style="--i:62"></i><i style="--i:63"></i><i style="--i:64"></i><i style="--i:65"></i><i style="--i:66"></i><i style="--i:67"></i><i style="--i:68"></i><i style="--i:69"></i><i style="--i:70"></i><i style="--i:71"></i><i style="--i:72"></i><i style="--i:73"></i><i style="--i:74"></i><i style="--i:75"></i><i style="--i:76"></i><i style="--i:77"></i><i style="--i:78"></i><i style="--i:79"></i><i style="--i:80"></i><i style="--i:81"></i><i style="--i:82"></i><i style="--i:83"></i><i style="--i:84"></i><i style="--i:85"></i><i style="--i:86"></i><i style="--i:87"></i><i style="--i:88"></i><i style="--i:89"></i><i style="--i:90"></i><i style="--i:91"></i><i style="--i:92"></i><i style="--i:93"></i><i style="--i:94"></i><i style="--i:95"></i><i style="--i:96"></i><i style="--i:97"></i><i style="--i:98"></i><i style="--i:99"></i></div>
     </div>
-    <div class="fig onward">
+    <div class="wunit onward">
       <div class="num">$53</div>
       <div class="lab">of every $100 was passed on to other charities</div>
+      <div class="waffle" role="img" aria-label="53 of 100 squares filled"><i class="f-onward" style="--i:0"></i><i class="f-onward" style="--i:1"></i><i class="f-onward" style="--i:2"></i><i class="f-onward" style="--i:3"></i><i class="f-onward" style="--i:4"></i><i class="f-onward" style="--i:5"></i><i class="f-onward" style="--i:6"></i><i class="f-onward" style="--i:7"></i><i class="f-onward" style="--i:8"></i><i class="f-onward" style="--i:9"></i><i class="f-onward" style="--i:10"></i><i class="f-onward" style="--i:11"></i><i class="f-onward" style="--i:12"></i><i class="f-onward" style="--i:13"></i><i class="f-onward" style="--i:14"></i><i class="f-onward" style="--i:15"></i><i class="f-onward" style="--i:16"></i><i class="f-onward" style="--i:17"></i><i class="f-onward" style="--i:18"></i><i class="f-onward" style="--i:19"></i><i class="f-onward" style="--i:20"></i><i class="f-onward" style="--i:21"></i><i class="f-onward" style="--i:22"></i><i class="f-onward" style="--i:23"></i><i class="f-onward" style="--i:24"></i><i class="f-onward" style="--i:25"></i><i class="f-onward" style="--i:26"></i><i class="f-onward" style="--i:27"></i><i class="f-onward" style="--i:28"></i><i class="f-onward" style="--i:29"></i><i class="f-onward" style="--i:30"></i><i class="f-onward" style="--i:31"></i><i class="f-onward" style="--i:32"></i><i class="f-onward" style="--i:33"></i><i class="f-onward" style="--i:34"></i><i class="f-onward" style="--i:35"></i><i class="f-onward" style="--i:36"></i><i class="f-onward" style="--i:37"></i><i class="f-onward" style="--i:38"></i><i class="f-onward" style="--i:39"></i><i class="f-onward" style="--i:40"></i><i class="f-onward" style="--i:41"></i><i class="f-onward" style="--i:42"></i><i class="f-onward" style="--i:43"></i><i class="f-onward" style="--i:44"></i><i class="f-onward" style="--i:45"></i><i class="f-onward" style="--i:46"></i><i class="f-onward" style="--i:47"></i><i class="f-onward" style="--i:48"></i><i class="f-onward" style="--i:49"></i><i class="f-onward" style="--i:50"></i><i class="f-onward" style="--i:51"></i><i class="f-onward" style="--i:52"></i><i style="--i:53"></i><i style="--i:54"></i><i style="--i:55"></i><i style="--i:56"></i><i style="--i:57"></i><i style="--i:58"></i><i style="--i:59"></i><i style="--i:60"></i><i style="--i:61"></i><i style="--i:62"></i><i style="--i:63"></i><i style="--i:64"></i><i style="--i:65"></i><i style="--i:66"></i><i style="--i:67"></i><i style="--i:68"></i><i style="--i:69"></i><i style="--i:70"></i><i style="--i:71"></i><i style="--i:72"></i><i style="--i:73"></i><i style="--i:74"></i><i style="--i:75"></i><i style="--i:76"></i><i style="--i:77"></i><i style="--i:78"></i><i style="--i:79"></i><i style="--i:80"></i><i style="--i:81"></i><i style="--i:82"></i><i style="--i:83"></i><i style="--i:84"></i><i style="--i:85"></i><i style="--i:86"></i><i style="--i:87"></i><i style="--i:88"></i><i style="--i:89"></i><i style="--i:90"></i><i style="--i:91"></i><i style="--i:92"></i><i style="--i:93"></i><i style="--i:94"></i><i style="--i:95"></i><i style="--i:96"></i><i style="--i:97"></i><i style="--i:98"></i><i style="--i:99"></i></div>
     </div>
   </div>
+  <p class="waffle-cap">Each square is $1 of every $100.</p>
+  <p class="other-line">The other $8 of every $100 went to fundraising ($6) and administration ($2).</p>
   <p class="fye">Year ended Jun 30, 2024 · as filed with the Canada Revenue Agency</p>
   <p class="teach">Some charities spend on their own work. Some pass money on to other charities. BookLook shows both figures side by side — never added together — so before you give, you can see where the money actually went.</p>
   <a class="read-link" href="charity/118881549RR0001.html">Read its page&nbsp;&rarr;</a>
+  </div>
 </section>
 
-<!-- 4 · WAYS IN -->
+<!-- 3 · WAYS IN -->
 <div class="ways">
   <h2>Ways in</h2>
 
-  <section class="card">
-    <h3>Charities that filed over $1 billion in revenue</h3>
-    <p class="way-sub">Grouped by the revenue in each charity&rsquo;s newest return, and listed in alphabetical order inside the group — size is not a verdict.</p>
-    <ul class="names">
-      <li><a href="charity/870157641RR0001.html">Canadian Blood Services <span class="chev">&rarr;</span></a></li>
-      <li><a href="charity/860684232RR0001.html">Cancer Care Ontario <span class="chev">&rarr;</span></a></li>
-      <li><a href="charity/107268864RR0001.html">Dufferin-Peel Catholic District School Board <span class="chev">&rarr;</span></a></li>
-      <li><a href="charity/107462301RR0001.html">Halton District School Board <span class="chev">&rarr;</span></a></li>
-      <li><a href="charity/867435497RR0001.html">Hamilton Health Sciences Corporation <span class="chev">&rarr;</span></a></li>
-    </ul>
-    <a class="seeall" href="browse.html">See all — browse by size&nbsp;&rarr;</a>
-  </section>
-
-  <section class="card">
+  <section class="way">
     <h3>A charity at random</h3>
     <p class="way-sub">No ranking, no reason. Every charity here gets the same page, built the same way — open one and see.</p>
     <button class="btn" id="randomBtn" type="button">Surprise me</button>
   </section>
 
-  <section class="card">
+  <section class="way">
     <h3>Browse by what charities do</h3>
-    <div class="chips">
-      <a class="chip" href="categories.html">Health</a>
-      <a class="chip" href="categories.html">Education</a>
-      <a class="chip" href="categories.html">Religion</a>
-      <a class="chip" href="categories.html">Poverty relief</a>
-      <a class="chip" href="categories.html">Environment</a>
-      <a class="chip" href="categories.html">Animal welfare</a>
-      <a class="chip" href="categories.html">Arts &amp; culture</a>
-      <a class="chip" href="categories.html">Research</a>
-      <a class="chip" href="categories.html">Seniors</a>
-      <a class="chip" href="categories.html">Human rights</a>
-    </div>
+    <div class="tiles"><a class="tile" href="category/core-health-care.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span><span class="tl">Health</span><span class="tc">1,477 charities</span></span></a><a class="tile" href="category/teaching-institutions.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6C9.8 4.4 6.4 3.8 3 4.4v13.2c3.4-.6 6.8 0 9 1.6 2.2-1.6 5.6-2.2 9-1.6V4.4C17.6 3.8 14.2 4.4 12 6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 6v13.2" stroke="currentColor" stroke-width="1.8"/></svg><span><span class="tl">Education</span><span class="tc">1,251 charities</span></span></a><a class="tile" href="category/support-of-religion.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 21V10.5L12 4l8 6.5V21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.5 21v-5a2.5 2.5 0 0 1 5 0v5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 21h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span><span class="tl">Religion</span><span class="tc">1,921 charities</span></span></a><a class="tile" href="category/organizations-relieving-poverty.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 11 12 4l8.5 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 9.5V20h12V9.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 16.9s-2.7-1.7-2.7-3.3c0-.9.7-1.6 1.5-1.6.5 0 1 .3 1.2.8.2-.5.7-.8 1.2-.8.8 0 1.5.7 1.5 1.6 0 1.6-2.7 3.3-2.7 3.3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span><span class="tl">Poverty relief</span><span class="tc">4,169 charities</span></span></a><a class="tile" href="category/environment.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.5 19.5C5.5 11 11.5 4.8 20 4.5c-.3 8.5-5.5 14.5-14.5 15Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M5.5 19.5c1.8-5.2 5.3-9 10-11.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span><span class="tl">Environment</span><span class="tc">182 charities</span></span></a><a class="tile" href="category/animal-welfare.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="6.8" cy="8.2" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="5.6" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="8.2" r="1.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 11.2c2.9 0 5.4 2.3 5.4 4.8 0 1.7-1.3 2.7-2.9 2.7-1 0-1.6-.4-2.5-.4s-1.5.4-2.5.4c-1.6 0-2.9-1-2.9-2.7 0-2.5 2.5-4.8 5.4-4.8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span><span class="tl">Animal welfare</span><span class="tc">460 charities</span></span></a><a class="tile" href="category/arts.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="9.3" r="1.15" fill="currentColor"/><circle cx="14.6" cy="8.7" r="1.15" fill="currentColor"/><circle cx="8.7" cy="14.2" r="1.15" fill="currentColor"/><circle cx="15" cy="15.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span><span class="tl">Arts &amp; culture</span><span class="tc">1,040 charities</span></span></a><a class="tile" href="category/research.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.5 3h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10.5 3v5.2L5.9 17a2 2 0 0 0 1.8 3h8.6a2 2 0 0 0 1.8-3L13.5 8.2V3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.2 14.5h7.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span><span class="tl">Research</span><span class="tc">157 charities</span></span></a><a class="tile" href="category/relief-of-the-aged.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="4.9" r="2.1" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 8.2V14l-2.1 5.5M9 14l2.6 5.5M9 10c1.9.3 3.4 1.3 4.2 3l1.9 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span class="tl">Seniors</span><span class="tc">157 charities</span></span></a><a class="tile" href="category/upholding-human-rights.html"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="3.4" r="1.2" fill="currentColor"/><path d="M12 4.6V17M5 20.5h14M12 7H6.2M12 7h5.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6.2 7 3.7 12a3.4 3.4 0 0 0 5 0L6.2 7ZM17.8 7l-2.5 5a3.4 3.4 0 0 0 5 0L17.8 7Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 20.5v-3.5h5v3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span><span class="tl">Human rights</span><span class="tc">26 charities</span></span></a></div>
   </section>
 
-  <section class="card">
+  <section class="way">
+    <h3>Largest charities by revenue</h3>
+    <p class="size-cap">Alphabetical within each size group. Size is not a verdict.</p>
+    <p class="bandlabel">$1B+</p>
+    <ul class="names">
+      <li><a href="charity/870157641RR0001.html">Canadian Blood Services <span class="rgroup">$1B+</span></a></li>
+      <li><a href="charity/860684232RR0001.html">Cancer Care Ontario <span class="rgroup">$1B+</span></a></li>
+      <li><a href="charity/107268864RR0001.html">Dufferin-Peel Catholic District School Board <span class="rgroup">$1B+</span></a></li>
+      <li><a href="charity/107462301RR0001.html">Halton District School Board <span class="rgroup">$1B+</span></a></li>
+      <li><a href="charity/867435497RR0001.html">Hamilton Health Sciences Corporation <span class="rgroup">$1B+</span></a></li>
+    </ul>
+    <p class="bandlabel">$250M&ndash;$1B</p>
+    <ul class="names"><li><a href="charity/826630865RR0001.html">Algoma University Université Algoma <span class="rgroup">$250M–$1B</span></a></li><li><a href="charity/873591564RR0001.html">Avon Maitland District School Board <span class="rgroup">$250M–$1B</span></a></li><li><a href="charity/804213759RR0001.html">BenefAction Foundation <span class="rgroup">$250M–$1B</span></a></li><li><a href="charity/889803227RR0001.html">Bluewater District School Board <span class="rgroup">$250M–$1B</span></a></li><li><a href="charity/107954927RR0001.html">Bluewater Health <span class="rgroup">$250M–$1B</span></a></li></ul>
+    <a class="seeall" href="browse.html">See all — browse by size&nbsp;&rarr;</a>
+  </section>
+
+  <section class="way">
     <h3>How to read this site</h3>
     <p class="way-sub">What each figure means, where it comes from in the filing, and how to dispute a number if you think it&rsquo;s wrong.</p>
     <a class="seeall" href="how-to-read.html">Read the guide&nbsp;&rarr;</a>
   </section>
 </div>
 
-<!-- 5 · STANDING NOTE, demoted -->
 </main>
 <footer>
   <p>BookLook covers Ontario: 39,699 registered charities and 487,398 annual returns, filing years 2009&ndash;2024. Every figure is as filed with the Canada Revenue Agency. There are no scores, grades, or rankings here.</p>
@@ -179,6 +218,17 @@ footer p{font-size:13.5px;color:var(--ink3);line-height:1.55;margin:0 0 8px}
 </footer>
 
 </div>
+<script>
+(function(){
+  var grids=document.querySelectorAll(".waffle");
+  if(!grids.length||!("IntersectionObserver" in window))return;
+  grids.forEach(function(g){g.classList.add("js-anim")});
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add("inview");io.unobserve(e.target)}});
+  },{threshold:0.25});
+  grids.forEach(function(g){io.observe(g)});
+})();
+</script>
 <script>window.BL_SEARCH={prefix:"charity/",strips:false,titlecase:true};</script>
 <script src="assets/search.js"></script>
 </body>

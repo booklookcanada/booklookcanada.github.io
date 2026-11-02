@@ -189,7 +189,7 @@ input[type=search]:focus{border-color:#101B2B;outline:3px solid #F5B93A;box-shad
 .sstat{font-size:13.5px;color:#5F6F84;padding:10px 2px 0;margin:0}
 .serror{font-size:15px;color:#44546A;padding:10px 2px 0}
 .serror p{margin:0 0 8px}
-.sretry{min-height:44px;padding:0 16px;border:1.5px solid #0B63B5;border-radius:10px;background:transparent;color:#0B63B5;font:inherit;font-weight:650;cursor:pointer}
+.sretry{min-height:44px;padding:0 16px;border:1.5px solid #101B2B;border-radius:10px;background:transparent;color:#101B2B;font:inherit;font-weight:650;cursor:pointer}
 .noresult{font-size:15px;color:#44546A;padding:10px 2px 0}
 .result.kb-on{outline:2px solid #F5B93A;outline-offset:1px}
 
@@ -197,7 +197,7 @@ input[type=search]:focus{border-color:#101B2B;outline:3px solid #F5B93A;box-shad
    always carried its own dark palette as CSS variables; these are the same
    values mapped onto the same roles here (Daylight->#0D141F page, Surface->
    #16202E cards, Ink->#E9EFF6 text, Ink 2->#A9B8C9, Ink 3->#8B9BAE,
-   Hairline->#263242, Wash->#1B2839, Own->#63A9EC for the retry button), so
+   Hairline->#263242, Wash->#1B2839, the retry button follows ink), so
    a dark-mode phone gets one consistent site. Marigold is unchanged: it
    is decoration only in both schemes. Data segments styled inline keep
    their filed colours in both schemes, as on the front door. */
@@ -243,7 +243,7 @@ input[type=search]:focus{border-color:#101B2B;outline:3px solid #F5B93A;box-shad
  .tilelink .tc{color:#8B9BAE}
  .serror,.noresult{color:#A9B8C9}
  .sstat{color:#8B9BAE}
- .sretry{border-color:#63A9EC;color:#63A9EC}
+ .sretry{border-color:#E9EFF6;color:#E9EFF6}
  .tcol .tb{background:#8B9BAE}
  .tcol.gap .tb{border-color:#8B9BAE}
 }
